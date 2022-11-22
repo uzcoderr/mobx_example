@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:mobpdp/service/ApiService.dart';
+import 'package:mobpdp/storemobx/edit_page_store.dart';
 
 import '../model/Post.dart';
 
@@ -17,22 +18,12 @@ class PostUpdateScreen extends StatefulWidget {
 
 class _PostUpdateScreenState extends State<PostUpdateScreen> {
 
-  TextEditingController title = TextEditingController();
-  TextEditingController body = TextEditingController();
 
-  void _apiUpdateUsers(String api,Post post) {
-    ApiService.UPDATE(api, ApiService.paramsPost(post))
-        .then((value) => {
-          Navigator.pop(context,widget.post)
-    });
-  }
+  UpdatePostPage updatePostStore = UpdatePostPage();
 
   @override
   void initState() {
-    setState(() {
-      title.text = widget.post.title;
-      body.text = widget.post.body;
-    });
+    updatePostStore.start(widget);
     super.initState();
   }
 
@@ -138,7 +129,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
                     onChanged: (txt){
                       widget.post.title = txt;
                     },
-                    controller: title,
+                    controller: updatePostStore.title,
                     decoration: InputDecoration(
                       hintText: 'title',
                       hintStyle: const TextStyle(
@@ -176,7 +167,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
                     onChanged: (txt){
                       widget.post.body = txt;
                     },
-                    controller: body,
+                    controller: updatePostStore.body,
                     decoration: InputDecoration(
                       hintText: 'body',
                       hintStyle: const TextStyle(
@@ -195,7 +186,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
 
           ElevatedButton(
             onPressed: () {
-              _apiUpdateUsers("${ApiService.GET_API}/${widget.index}",widget.post);
+              updatePostStore.apiUpdateUsers("${ApiService.GET_API}/${widget.index}",widget.post,context,widget);
             },
             child: const Text('submit'),
           )
